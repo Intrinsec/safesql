@@ -9,7 +9,7 @@ Usage
 -----
 
 ```
-$ go get github.com/intrinsec/safesql
+$ go install github.com/intrinsec/safesql@latest
 
 $ safesql
 Usage: safesql [-q] [-v] package1 [package2 ...]
