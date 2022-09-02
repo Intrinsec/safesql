@@ -1,18 +1,15 @@
-> <img src="https://stripe.dev/images/badges/archived.png" width="250">
->
-> This project is deprecated and is no longer being actively maintained.
-
 SafeSQL
 =======
 
 SafeSQL is a static analysis tool for Go that protects against SQL injections.
 
+This version is a fork from github.com/stripe/safesql with pgx v4 support added.
 
 Usage
 -----
 
 ```
-$ go get github.com/stripe/safesql
+$ go get github.com/intrinsec/safesql
 
 $ safesql
 Usage: safesql [-q] [-v] package1 [package2 ...]
