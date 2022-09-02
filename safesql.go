@@ -44,6 +44,14 @@ var sqlPackages = []sqlPackage{
 		packageName: "github.com/jmoiron/sqlx",
 		paramNames:  []string{"query"},
 	},
+	{
+		packageName: "github.com/jackc/pgx/v4",
+		paramNames:  []string{"sql", "query"},
+	},
+}
+
+var ignoredFiles = []string{
+	"github.com/jackc/pgx/v4/pgxpool/conn.go",
 }
 
 func main() {
@@ -159,7 +167,7 @@ func main() {
 
 	for _, issue := range issues {
 		if issue.ignored {
-			fmt.Printf("- %s is potentially unsafe but ignored by comment\n", issue.statement)
+			fmt.Printf("- %s is potentially unsafe but file is ignored or statement ignored by comment\n", issue.statement)
 		} else {
 			fmt.Printf("- %s\n", issue.statement)
 			hasNonIgnoredUnsafeStatement = true
@@ -197,6 +205,17 @@ func CheckIssues(lines []token.Position) ([]Issue, error) {
 	issues := []Issue{}
 
 	for file, linesInFile := range files {
+
+		fileIsIgnored := false
+
+		// check for ignored files
+		for _, ignoredFile := range ignoredFiles {
+			if strings.HasSuffix(file, ignoredFile) {
+				fileIsIgnored = true
+				break
+			}
+		}
+
 		// ensure we have the lines in ascending order
 		sort.Slice(linesInFile, func(i, j int) bool { return linesInFile[i].Line < linesInFile[j].Line })
 
@@ -217,7 +236,7 @@ func CheckIssues(lines []token.Position) ([]Issue, error) {
 				continue
 			}
 
-			isIgnored := HasIgnoreComment(fileLines[line.Line-1])
+			isIgnored := HasIgnoreComment(fileLines[line.Line-1]) || fileIsIgnored
 			issues = append(issues, Issue{statement: line, ignored: isIgnored})
 		}
 	}
